@@ -1,0 +1,119 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <title>Fetch API</title>
+    </head>
+
+    <body class="container">
+        <div class="center-align">
+        <h2>Fetch API Sandbox</h2>
+
+        <button id="getText" class="blue darken-1 btn">Get Text</button>
+
+        <button id="getJson" class="green btn">Get Json</button>
+
+        <button id="getAPI" class="yellow accent-2 btn">Get API DATA</button>
+    </div>
+    <br>
+        <div id="p" ></div>
+        <div id="p1" ></div>
+        
+        <hr>
+
+        <form id="addpost" style="width: 50%; margin-left: 190px;" >
+            <div>
+                <input id="title" placeholder="Title">
+            </div>
+            <div>
+                <textarea id="body" placeholder="body"></textarea>
+            </div>
+            <input type="submit" value="submit" class="btn">
+
+            <p>*After clicking on submit, go to console to check the input*</p>
+        </form>
+    </body>
+
+    <script>
+        var a = document.getElementById('getText');
+        a.addEventListener('click',getText);
+
+        var b = document.getElementById('getJson');
+        b.addEventListener('click',getJson);
+
+        var c = document.getElementById('getAPI');
+        c.addEventListener('click',getAPI);
+
+        var d = document.getElementById('addpost');
+        d.addEventListener('submit',addpost);
+
+        function getText()
+        {
+            fetch('simple.txt')
+            .then((res) => res.text())
+            .then((data) => {
+                document.getElementById('p').innerHTML = 
+
+                `<ul class="collection container" >
+                <li>${data}</li>
+                </ul>`;
+            })
+            .catch((err)=> console.log(err))
+        }
+
+        function getJson()
+        {
+            fetch('users.json')
+            .then((res) => res.json())
+            .then((data) => {
+                var output ='';
+                for(var i in data)
+                {
+                output += `<ul class="collection container">
+                    <li class="collection-item">ID:${data[i].id}</li>
+                    <li class="collection-item">Name:${data[i].name}</li>
+                    <li class="collection-item">Email:${data[i].email}</li>
+                </ul> <br> `;
+                document.getElementById('p').innerHTML = output;
+                }
+            })
+        }
+
+    function getAPI()
+    {
+        fetch('https://jsonplaceholder.typicode.com/posts')
+        .then((res) => res.json())
+        .then((data) => {
+            let output=``;
+            data.forEach(element => {
+                output += `<ul class="collection container">
+                   
+                    <li class="collection-header"><h4>${element.title}</h4></li> 
+                    <li >${element.body}</li>
+                    </ul><br>`
+                    document.getElementById('p').innerHTML = output; 
+            });
+            
+        })
+    }
+
+    function addpost(e)
+    {
+        e.preventDefault();
+        let title = document.getElementById('title').value;
+        let body = document.getElementById('body').value;
+
+        fetch('https://jsonplaceholder.typicode.com/posts',
+        {
+            method:'POST',
+            headers:{
+                'Accept':'application/json,text/plain,*/*',
+                'Content-type':'application/json'
+            },
+            body:JSON.stringify({title:title,body:body})
+        })
+        .then((res) => res.json())
+        .then((data) => console.log(data))
+
+    }
+    </script>
+</html>
